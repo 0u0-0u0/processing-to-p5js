@@ -4,6 +4,7 @@ let cardOrder = []; // 카드의 정답 배열
 let flipped = []; // 카드의 뒤집힘 상태
 let matched = []; // 카드의 일치 여부
 let numPairs; // 현재 스테이지의 카드 쌍 수
+
 let matchedPairs = 0; // 맞춘 쌍의 수
 let firstSelection = -1; // 첫 번째 카드의 인덱스
 let secondSelection = -1; // 두 번째 카드의 인덱스
@@ -53,9 +54,9 @@ function setup() {
   );
 
   // 컨티뉴 이미지 로드
-  continueImage = loadImage("continue_images/background.png", 
+  continueImage = loadImage("continue_images/continue1.png", 
     () => console.log("Continue image loaded."),
-    () => console.log("The file continue_images/background.png is missing or inaccessible.")
+    () => console.log("The file continue_images/continue1.png is missing or inaccessible.")
   );
 }
 
