@@ -1,12 +1,5 @@
-//let images = [];
-//let imagePaths = [];
-//let imageFileNames = ["0923", "0926", "0927", "0929", "0930", "1001", "1002", "1003", "1004", 
-//"1005", "1007", "1008", "1017", "1019", "1021", "1022", "1023", "1024", "1025", "1027", "1028",
-//"1029", "1030", "1031", "1102", "1103", "1104", "1105", "1106", "1107", "1108", "1109", "1110",
-//"1111", "1112", "1113" ]; // 파일 이름만 배열에 저장
-
-
-//let images = []; // 모든 이미지를 담는 배열
+let images = []; // 모든 이미지를 담는 배열
+let imageFileNames = ["0923", "0926", "0927", "0929", "0930", "1001", "1002", "1003", "1004", "1005", "1007", "1008", "1017", "1019", "1021", "1022", "1023", "1024", "1025", "1027", "1028", "1029", "1030", "1031", "1102", "1103", "1104", "1105", "1106", "1107", "1108", "1109", "1110", "1111", "1112", "1113" ]; // 파일 이름만 배열에 저장 // 모든 이미지를 담는 배열
 let cardOrder = []; // 카드의 정답 배열
 let flipped = []; // 카드의 뒤집힘 상태
 let matched = []; // 카드의 일치 여부
@@ -54,11 +47,10 @@ function setup() {
   cardHeight = height / (numPairs + 1); // 카드 높이
 
   // 백그라운드 이미지 로드
-  //backgroundImage = loadImage("continue_images/background.png");
- // if (backgroundImage === null) {
- //   console.log("The file continue_images/background.png is missing or inaccessible.");
- //
-}
+  backgroundImage = loadImage("continue_images/background.png");
+  if (backgroundImage === null) {
+    console.log("The file continue_images/background.png is missing or inaccessible.");
+  }
 
   // 컨티뉴 이미지 로드
   continueImage = loadImage("continue_images/continue.png");
@@ -103,15 +95,12 @@ function draw() {
 function loadImages() {
   // p5.js는 로컬 파일 시스템 접근이 제한적이므로 파일 이름을 직접 입력해 로드해야 합니다.
   // game_images 폴더 내 파일 이름들을 배열로 미리 준비하세요.
-let imageFileNames = ["0923", "0926", "0927", "0929", "0930", "1001", "1002", "1003", "1004", 
-"1005", "1007", "1008", "1017", "1019", "1021", "1022", "1023", "1024", "1025", "1027", "1028",
-"1029", "1030", "1031", "1102", "1103", "1104", "1105", "1106", "1107", "1108", "1109", "1110",
-"1111", "1112", "1113" ]; // 파일 이름만 배열에 저장
+  let fileNames = ["image1.jpg", "image2.jpg", "image3.jpg", "image4.jpg", "image5.jpg"]; // 예시 파일 이름들
 
-  for (let i = 0; i < fileNames.length; i++) {
-    let img = loadImage("game_images/" + fileNames[i], 
-      () => console.log("Loaded: " + fileNames[i]),
-      () => console.log("Image load failed: " + fileNames[i])
+  for (let i = 0; i < imageFileNames.length; i++) {
+    let img = loadImage("game_images/" + imageFileNames[i] + ".jpg", 
+      () => console.log("Loaded: " + imageFileNames[i]),
+      () => console.log("Image load failed: " + imageFileNames[i])
     );
     images.push(img);
   }
