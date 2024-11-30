@@ -95,7 +95,7 @@ function draw() {
 function loadImages() {
   // p5.js는 로컬 파일 시스템 접근이 제한적이므로 파일 이름을 직접 입력해 로드해야 합니다.
   // game_images 폴더 내 파일 이름들을 배열로 미리 준비하세요.
-  let fileNames = ["image1.jpg", "image2.jpg", "image3.jpg", "image4.jpg", "image5.jpg"]; // 예시 파일 이름들
+  let imageFileNames = ["0923", "0926", "0927", "0929", "0930", "1001", "1002", "1003", "1004", "1005", "1007", "1008", "1017", "1019", "1021", "1022", "1023", "1024", "1025", "1027", "1028", "1029", "1030", "1031", "1102", "1103", "1104", "1105", "1106", "1107", "1108", "1109", "1110", "1111", "1112", "1113"]; // 예시 파일 이름들
 
   for (let i = 0; i < imageFileNames.length; i++) {
     let img = loadImage("game_images/" + imageFileNames[i] + ".jpg", 
@@ -119,17 +119,18 @@ function setupStage() {
     imageIndices.push(i);
   }
 
-  shuffle(imageIndices);
+  shuffleArray(imageIndices);
   for (let i = 0; i < totalCards; i++) {
     cardOrder[i] = imageIndices[i];
   }
 }
 
-function shuffle(array) {
+function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
+}
 }
 
 function displayCards() {
