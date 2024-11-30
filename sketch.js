@@ -102,19 +102,21 @@ function loadContinueImages() {
   // continue_images 폴더 내 파일이 continue1.png, continue2.png, ... 이런 형식으로 있다고 가정하고 자동으로 로드
   let index = 1;
   let img;
-  do {
+  while (true) {
     img = loadImage("continue_images/continue" + index + ".png", 
       () => {
         console.log("Continue image loaded: continue" + index);
         continueImages.push(img);
-        index++;
       },
       () => {
         console.log("The file continue_images/continue" + index + ".png is missing or inaccessible.");
-        img = null; // 이미지가 없을 경우 반복 종료
       }
     );
-  } while (img !== null);
+    if (img.width === 0) {
+      break;
+    }
+    index++;
+  }
 }
 
 function setupStage() {
