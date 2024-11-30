@@ -97,7 +97,7 @@ function draw() {
 function loadImages() {
   // p5.js는 로컬 파일 시스템 접근이 제한적이므로 파일 이름을 직접 입력해 로드해야 합니다.
   // game_images 폴더 내 파일 이름들을 배열로 미리 준비하세요.
-  let fileNames = ["image1.jpg", "image2.jpg", "image3.jpg", ...]; // 예시 파일 이름들
+  let fileNames = ["image1.jpg", "image2.jpg", "image3.jpg", "image4.jpg", "image5.jpg"]; // 예시 파일 이름들
 
   for (let i = 0; i < fileNames.length; i++) {
     let img = loadImage("game_images/" + fileNames[i], 
@@ -207,3 +207,4 @@ function resetSelections() {
   secondSelection = -1;
   isChecking = false;
 }
+
