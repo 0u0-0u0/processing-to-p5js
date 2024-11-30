@@ -1,45 +1,146 @@
-let images = [];
-let imagePaths = [];
-let imageFileNames = ["0923", "0926", "0927", "0929", "0930", "1001", "1002", "1003", "1004", 
+//let images = [];
+//let imagePaths = [];
+//let imageFileNames = ["0923", "0926", "0927", "0929", "0930", "1001", "1002", "1003", "1004", 
 "1005", "1007", "1008", "1017", "1019", "1021", "1022", "1023", "1024", "1025", "1027", "1028",
 "1029", "1030", "1031", "1102", "1103", "1104", "1105", "1106", "1107", "1108", "1109", "1110",
 "1111", "1112", "1113" ]; // 파일 이름만 배열에 저장
 
-for (let i = 0; i < imageFileNames.length; i++) {
-  imagePaths.push("game_images/" + imageFileNames[i] + ".jpg");
-}
 
-let cardOrder = [];
-let flipped = [];
-let matched = [];
-let numPairs = 3;
-let matchedPairs = 0;
-let firstSelection = -1;
-let secondSelection = -1;
-let isChecking = false;
-let cardWidth, cardHeight;
-let delayTime = 500;
-let delayStartTime = 0;
+let images = []; // 모든 이미지를 담는 배열
+let cardOrder = []; // 카드의 정답 배열
+let flipped = []; // 카드의 뒤집힘 상태
+let matched = []; // 카드의 일치 여부
+let numPairs; // 현재 스테이지의 카드 쌍 수
+let matchedPairs = 0; // 맞춘 쌍의 수
+let firstSelection = -1; // 첫 번째 카드의 인덱스
+let secondSelection = -1; // 두 번째 카드의 인덱스
+let isChecking = false; // 카드 비교 중인지 여부
+let cardWidth, cardHeight; // 카드 크기
+let totalStages = 4; // 총 스테이지 수
+let currentStage = 1; // 현재 진행 중인 스테이지
+let delayTime = 500; // 카드가 보여지는 시간 (밀리초)
+let delayStartTime = 0; // 카드 딜레이 시작 시간
+let maxPairs = 8; // 최대 카드 쌍 수 (최대 8쌍까지)
+let totalCards; // 총 카드 개수
+let isGameOver = false; // 게임 오버 상태 추가
+let font;
+
+// 이미지 로드용 변수
+let continueImage;
+let backgroundImage;
 
 function preload() {
-  for (let i = 0; i < imagePaths.length; i++) {
-    images[i] = loadImage(imagePaths[i]);
-  }
+  loadImages(); // 이미지 로드
 }
 
 function setup() {
-  createCanvas(800, 600);
-  cardWidth = width / 4;
-  cardHeight = height / 3;
-  setupStage();
+  createCanvas(800, 600); // 원하는 화면 크기로 설정
+  textFont('Nirmala UI, Arial', 32);
+
+  if (images.length === 0) {
+    console.log("No images found. Please check your data folder.");
+    noLoop(); // 이미지가 없으면 게임 종료
+    return;
+  }
+  if (images.length / 2 < maxPairs) {
+    console.log("Not enough images for the game to work correctly.");
+    noLoop(); // 이미지가 부족하면 게임 종료
+    return;
+  }
+
+  numPairs = 3; // 첫 번째 스테이지의 카드 쌍 수 설정
+  setupStage(); // 첫 번째 스테이지 설정
+  cardWidth = width / 4; // 카드 너비
+  cardHeight = height / (numPairs + 1); // 카드 높이
+
+  // 백그라운드 이미지 로드
+  backgroundImage = loadImage("continue_images/background.png");
+  if (backgroundImage === null) {
+    console.log("The file continue_images/background.png is missing or inaccessible.");
+  }
+
+  // 컨티뉴 이미지 로드
+  continueImage = loadImage("continue_images/continue.png");
+  if (continueImage === null) {
+    console.log("The file continue_images/continue.png is missing or inaccessible.");
+  }
 }
 
 function draw() {
   background(255);
 
+  if (isGameOver) { // 게임 오버 상태일 경우
+    if (backgroundImage) {
+      image(backgroundImage, 0, 0, width, height); // 백그라운드 이미지 표시
+    }
+
+    // "계속 실행하고 싶을 시 클릭" 메시지 표시
+    fill(255);
+    textSize(32);
+    textAlign(CENTER, CENTER);
+    text("click", width / 2, height / 2);
+    return; // draw 함수 종료
+  }
+
+  displayCards(); // 카드 표시
+
+  // 두 카드가 일치하지 않는 경우 일정 시간 후 뒤집기
+  if (isChecking && millis() - delayStartTime >= delayTime) {
+    if (cardOrder[firstSelection] !== cardOrder[secondSelection]) {
+      flipped[firstSelection] = false;
+      flipped[secondSelection] = false;
+    }
+    resetSelections(); // 카드 비교 후 선택 초기화
+  }
+}
+
+function loadImages() {
+  // p5.js는 로컬 파일 시스템 접근이 제한적이므로 파일 이름을 직접 입력해 로드해야 합니다.
+  // game_images 폴더 내 파일 이름들을 배열로 미리 준비하세요.
+  let fileNames = ["image1.jpg", "image2.jpg", "image3.jpg", ...]; // 예시 파일 이름들
+
+  for (let i = 0; i < fileNames.length; i++) {
+    let img = loadImage("game_images/" + fileNames[i], 
+      () => console.log("Loaded: " + fileNames[i]),
+      () => console.log("Image load failed: " + fileNames[i])
+    );
+    images.push(img);
+  }
+}
+
+function setupStage() {
+  totalCards = numPairs * 2; // 카드 개수 설정
+
+  cardOrder = new Array(totalCards);
+  flipped = new Array(totalCards).fill(false);
+  matched = new Array(totalCards).fill(false);
+
+  let imageIndices = []; // 각 이미지 인덱스를 두 번씩 배치
+  for (let i = 0; i < numPairs; i++) {
+    imageIndices.push(i);
+    imageIndices.push(i);
+  }
+
+  shuffle(imageIndices);
+  for (let i = 0; i < totalCards; i++) {
+    cardOrder[i] = imageIndices[i];
+  }
+}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function displayCards() {
+  let cols = 4;
+  let rows = Math.ceil(totalCards / cols);
+
   for (let i = 0; i < cardOrder.length; i++) {
-    let col = i % 4;
-    let row = Math.floor(i / 4);
+    let col = i % cols;
+    let row = Math.floor(i / cols);
     let x = col * cardWidth;
     let y = row * cardHeight;
 
@@ -50,49 +151,53 @@ function draw() {
       rect(x, y, cardWidth, cardHeight);
     }
   }
-
-  if (isChecking && millis() - delayStartTime >= delayTime) {
-    if (cardOrder[firstSelection] !== cardOrder[secondSelection]) {
-      flipped[firstSelection] = false;
-      flipped[secondSelection] = false;
-    }
-    resetSelections();
-  }
-}
-
-function setupStage() {
-  let totalCards = numPairs * 2;
-  cardOrder = [];
-  flipped = [];
-  matched = [];
-
-  let imageIndices = [];
-  for (let i = 0; i < numPairs; i++) {
-    imageIndices.push(i, i);
-  }
-  shuffle(imageIndices, true);
-
-  for (let i = 0; i < totalCards; i++) {
-    cardOrder.push(imageIndices[i]);
-    flipped.push(false);
-    matched.push(false);
-  }
 }
 
 function mousePressed() {
-  let col = Math.floor(mouseX / cardWidth);
-  let row = Math.floor(mouseY / cardHeight);
-  let index = row * 4 + col;
+  if (isGameOver) {
+    // 게임 오버 상태에서 클릭 시 다시 게임 시작
+    isGameOver = false;
+    matchedPairs = 0;
+    numPairs = 3;
+    currentStage = 1;
+    setupStage(); // 첫 번째 스테이지로 돌아가기
+    return; // 게임 계속
+  }
 
-  if (index >= 0 && index < cardOrder.length && !flipped[index] && !matched[index]) {
+  let cols = 4;
+  let index = Math.floor(mouseX / cardWidth) + Math.floor(mouseY / cardHeight) * cols;
+
+  if (index < cardOrder.length && !flipped[index] && !matched[index] && (firstSelection === -1 || secondSelection === -1)) {
+    flipped[index] = true;
+
     if (firstSelection === -1) {
       firstSelection = index;
-      flipped[index] = true;
     } else if (secondSelection === -1 && index !== firstSelection) {
       secondSelection = index;
-      flipped[index] = true;
       isChecking = true;
       delayStartTime = millis();
+
+      if (cardOrder[firstSelection] === cardOrder[secondSelection]) {
+        matched[firstSelection] = true;
+        matched[secondSelection] = true;
+        matchedPairs++;
+        resetSelections();
+
+        if (matchedPairs === numPairs) {
+          matchedPairs = 0;
+
+          if (currentStage === totalStages) {
+            isGameOver = true; // 게임 오버 상태로 전환
+          } else {
+            currentStage++;
+            numPairs++;
+            if (numPairs > maxPairs) {
+              numPairs = maxPairs;
+            }
+            setupStage();
+          }
+        }
+      }
     }
   }
 }
