@@ -67,6 +67,11 @@ function setup() {
 }
 
 function draw() {
+  if (images.some(img => img === undefined)) {
+    console.log("Loading images...");
+    return; // 이미지가 아직 모두 로드되지 않았으면 draw 함수 종료
+  }
+
   background(255);
 
   if (isGameOver) { // 게임 오버 상태일 경우
@@ -165,36 +170,39 @@ function mousePressed() {
   }
 
   let cols = 4;
+  let rows = Math.ceil(totalCards / cols);
   let index = Math.floor(mouseX / cardWidth) + Math.floor(mouseY / cardHeight) * cols;
 
-  if (index < cardOrder.length && !flipped[index] && !matched[index] && (firstSelection === -1 || secondSelection === -1)) {
-    flipped[index] = true;
+  if (index >= 0 && index < cardOrder.length && mouseX < width && mouseY < height) {
+    if (!flipped[index] && !matched[index] && (firstSelection === -1 || secondSelection === -1)) {
+      flipped[index] = true;
 
-    if (firstSelection === -1) {
-      firstSelection = index;
-    } else if (secondSelection === -1 && index !== firstSelection) {
-      secondSelection = index;
-      isChecking = true;
-      delayStartTime = millis();
+      if (firstSelection === -1) {
+        firstSelection = index;
+      } else if (secondSelection === -1 && index !== firstSelection) {
+        secondSelection = index;
+        isChecking = true;
+        delayStartTime = millis();
 
-      if (cardOrder[firstSelection] === cardOrder[secondSelection]) {
-        matched[firstSelection] = true;
-        matched[secondSelection] = true;
-        matchedPairs++;
-        resetSelections();
+        if (cardOrder[firstSelection] === cardOrder[secondSelection]) {
+          matched[firstSelection] = true;
+          matched[secondSelection] = true;
+          matchedPairs++;
+          resetSelections();
 
-        if (matchedPairs === numPairs) {
-          matchedPairs = 0;
+          if (matchedPairs === numPairs) {
+            matchedPairs = 0;
 
-          if (currentStage === totalStages) {
-            isGameOver = true; // 게임 오버 상태로 전환
-          } else {
-            currentStage++;
-            numPairs++;
-            if (numPairs > maxPairs) {
-              numPairs = maxPairs;
+            if (currentStage === totalStages) {
+              isGameOver = true; // 게임 오버 상태로 전환
+            } else {
+              currentStage++;
+              numPairs++;
+              if (numPairs > maxPairs) {
+                numPairs = maxPairs;
+              }
+              setupStage();
             }
-            setupStage();
           }
         }
       }
@@ -207,4 +215,3 @@ function resetSelections() {
   secondSelection = -1;
   isChecking = false;
 }
-
