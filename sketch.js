@@ -47,15 +47,15 @@ function setup() {
   cardHeight = height / (numPairs + 1); // 카드 높이
 
   // 백그라운드 이미지 로드
-  backgroundImage = loadImage("continue_images/background.png", 
+  backgroundImage = loadImage("background/background.png", 
     () => console.log("Background image loaded."),
-    () => console.log("The file continue_images/background.png is missing or inaccessible.")
+    () => console.log("The file background/background.png is missing or inaccessible.")
   );
 
   // 컨티뉴 이미지 로드
-  continueImage = loadImage("continue_images/continue.png", 
+  continueImage = loadImage("continue_images/background.png", 
     () => console.log("Continue image loaded."),
-    () => console.log("The file continue_images/continue.png is missing or inaccessible.")
+    () => console.log("The file continue_images/background.png is missing or inaccessible.")
   );
 }
 
