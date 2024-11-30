@@ -99,13 +99,22 @@ function loadImages() {
 }
 
 function loadContinueImages() {
-  let continueFileNames = ["continue1", "continue2"]; // continue 이미지 파일 이름들
-  for (let i = 0; i < continueFileNames.length; i++) {
-    let img = loadImage("continue_images/" + continueFileNames[i] + ".png", 
-      () => console.log("Continue image loaded: " + continueFileNames[i]),
-      () => console.log("The file continue_images/" + continueFileNames[i] + ".png is missing or inaccessible."));
-    continueImages.push(img);
-  }
+  // continue_images 폴더 내 파일이 continue1.png, continue2.png, ... 이런 형식으로 있다고 가정하고 자동으로 로드
+  let index = 1;
+  let img;
+  do {
+    img = loadImage("continue_images/continue" + index + ".png", 
+      () => {
+        console.log("Continue image loaded: continue" + index);
+        continueImages.push(img);
+        index++;
+      },
+      () => {
+        console.log("The file continue_images/continue" + index + ".png is missing or inaccessible.");
+        img = null; // 이미지가 없을 경우 반복 종료
+      }
+    );
+  } while (img !== null);
 }
 
 function setupStage() {
