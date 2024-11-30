@@ -20,12 +20,11 @@ let isGameOver = false; // 게임 오버 상태 추가
 let font;
 
 // 이미지 로드용 변수
-let continueImages = [];
+let continueImage;
 let backgroundImage;
 
 function preload() {
   loadImages(); // 이미지 로드
-  loadContinueImages(); // 컨티뉴 이미지 로드
 }
 
 function setup() {
@@ -52,6 +51,12 @@ function setup() {
   backgroundImage = loadImage("background/background.png", 
     () => console.log("Background image loaded."),
     () => console.log("The file background/background.png is missing or inaccessible.")
+  );
+
+  // 컨티뉴 이미지 로드
+  continueImage = loadImage("continue_images/continue1.png", 
+    () => console.log("Continue image loaded."),
+    () => console.log("The file continue_images/continue1.png is missing or inaccessible.")
   );
 }
 
@@ -95,27 +100,6 @@ function loadImages() {
       () => console.log("Image load failed: " + imageFileNames[i])
     );
     images.push(img);
-  }
-}
-
-function loadContinueImages() {
-  // continue_images 폴더 내 파일이 continue1.png, continue2.png, ... 이런 형식으로 있다고 가정하고 자동으로 로드
-  let index = 1;
-  let img;
-  while (true) {
-    img = loadImage("continue_images/continue" + index + ".png", 
-      () => {
-        console.log("Continue image loaded: continue" + index);
-        continueImages.push(img);
-      },
-      () => {
-        console.log("The file continue_images/continue" + index + ".png is missing or inaccessible.");
-      }
-    );
-    if (img.width === 0) {
-      break;
-    }
-    index++;
   }
 }
 
