@@ -219,9 +219,3 @@ function resetSelections() {
   secondSelection = -1;
   isChecking = false;
 }
-
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight); // 윈도우 크기 변경 시 캔버스 크기 조정
-  cardWidth = width / 4;
-  cardHeight = height / (numPairs + 1);
-}
