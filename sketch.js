@@ -20,15 +20,16 @@ let isGameOver = false; // 게임 오버 상태 추가
 let font;
 
 // 이미지 로드용 변수
-let continueImage;
+let continueImages = [];
 let backgroundImage;
 
 function preload() {
   loadImages(); // 이미지 로드
+  loadContinueImages(); // 컨티뉴 이미지 로드
 }
 
 function setup() {
-  createCanvas(800, 600); // 원하는 화면 크기로 설정
+  createCanvas(windowWidth, windowHeight); // 원하는 화면 크기로 설정, 모바일 대응
   textFont('Nirmala UI, Arial', 32);
 
   if (images.length === 0) {
@@ -51,12 +52,6 @@ function setup() {
   backgroundImage = loadImage("background/background.png", 
     () => console.log("Background image loaded."),
     () => console.log("The file background/background.png is missing or inaccessible.")
-  );
-
-  // 컨티뉴 이미지 로드
-  continueImage = loadImage("continue_images/continue1.png", 
-    () => console.log("Continue image loaded."),
-    () => console.log("The file continue_images/continue1.png is missing or inaccessible.")
   );
 }
 
@@ -101,6 +96,25 @@ function loadImages() {
     );
     images.push(img);
   }
+}
+
+function loadContinueImages() {
+  // continue_images 폴더 내 파일이 continue1.png, continue2.png, ... 이런 형식으로 있다고 가정하고 자동으로 로드
+  let index = 1;
+  let img;
+  do {
+    img = loadImage("continue_images/continue" + index + ".png", 
+      () => {
+        console.log("Continue image loaded: continue" + index);
+        continueImages.push(img);
+        index++;
+      },
+      () => {
+        console.log("The file continue_images/continue" + index + ".png is missing or inaccessible.");
+        img = null; // 이미지가 없을 경우 반복 종료
+      }
+    );
+  } while (img !== null);
 }
 
 function setupStage() {
@@ -204,4 +218,10 @@ function resetSelections() {
   firstSelection = -1;
   secondSelection = -1;
   isChecking = false;
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight); // 윈도우 크기 변경 시 캔버스 크기 조정
+  cardWidth = width / 4;
+  cardHeight = height / (numPairs + 1);
 }
